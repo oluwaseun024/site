@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#0a1a3b">
+    <meta name="description" content="EL-AUTOS Blog — Car buying tips, market updates, and the latest deals in Abuja.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | EL-AUTOS</title>
+    <link rel="preload" href="./css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="./css/all.min.css"></noscript>
+    <link rel="stylesheet" href="./about.css">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></noscript>
+    <style>
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+        /* ── BLOG PAGE STYLES ── */
+        .blog-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem 5rem;
+        }
+
+        /* Category filter tabs */
+        .blog-filter {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        .blog-filter__btn {
+            padding: 0.5rem 1.2rem;
+            background: var(--white);
+            color: var(--dark);
+            border: 1.5px solid var(--card-border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .blog-filter__btn:hover,
+        .blog-filter__btn.active {
+            background: var(--navy);
+            color: var(--white);
+            border-color: var(--navy);
+        }
+
+        /* Featured post */
+        .featured-post {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 0;
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            transition: var(--transition);
+        }
+        .featured-post:hover {
+            box-shadow: 0 10px 30px rgba(10,26,59,0.1);
+            border-color: var(--navy);
+        }
+        .featured-post__img {
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+        .featured-post__img-placeholder {
+            width: 100%;
+            min-height: 280px;
+            background: linear-gradient(135deg, var(--navy), var(--dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: grey;
+        }
+        .featured-post__img-placeholder i { font-size: 4rem; color: rgba(255,255,255,0.1); }
+        .featured-post__content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .post-tag {
+            background: rgba(201,168,76,0.12);
+            color: var(--gold);
+            border: 1px solid rgba(201,168,76,0.3);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .post-date {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .featured-post__title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--dark);
+            line-height: 1.3;
+            margin-bottom: 0.8rem;
+        }
+        .featured-post__excerpt {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--navy);
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .read-more:hover { color: var(--gold); }
+        .read-more i { font-size: 0.75rem; }
+
+        /* Blog grid */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .blog-card {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 28px rgba(10,26,59,0.1);
+            border-color: var(--navy);
+        }
+        .blog-card__img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .blog-card__img-placeholder {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: grey;
+        }
+        .blog-card__img-placeholder i { font-size: 2.5rem; color: rgba(255,255,255,0.1); }
+        .blog-card__body {
+            padding: 1.2rem;
+        }
+        .blog-card__title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.4;
+            margin: 0.5rem 0 0.6rem;
+        }
+        .blog-card__excerpt {
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.65;
+            margin-bottom: 1rem;
+        }
+        .blog-card__footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--card-border);
+            padding-top: 0.8rem;
+            margin-top: auto;
+        }
+        .blog-card__author {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .blog-card__author strong { color: var(--dark); }
+
+        /* Newsletter bar */
+        .newsletter {
+            background: var(--navy);
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+        }
+        .newsletter__inner {
+            max-width: 550px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .newsletter h3 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .newsletter p {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.65);
+            margin-bottom: 1.4rem;
+        }
+        .newsletter__form {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .newsletter__input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            border: 1.5px solid rgba(255,255,255,0.2);
+        }
+        .newsletter__input::placeholder { color: rgba(255,255,255,0.4); }
+        .newsletter__input:focus { border-color: var(--gold); outline: none; }
+        .newsletter__btn {
+            padding: 0.75rem 1.4rem;
+            background: var(--gold);
+            color: var(--navy);
+            font-weight: 800;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .newsletter__btn:hover { background: #e0bc68; }
+
+        /* ===========================
+   FOOTER
+=========================== */
+.footer {
+  background: var(--dark);
+  color: rgba(255,255,255,0.75);
+  padding: 3rem 2rem 1.5rem;
+}
+
+.footer__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer__brand h2 {
+  color: var(--white);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.footer__brand p {
+  font-size: 0.9rem;
+}
+
+.footer__links h4,
+.footer__contact h4 {
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.footer__links ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer__links a {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.footer__links a:hover { color: var(--gold); }
+
+.footer__contact p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer__contact i { color: var(--gold); }
+
+.footer__bottom {
+  max-width: 1100px;
+  margin: 1.2rem auto 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+  .nav__wrap { display: none; }
+  .nav__form { display: none; }
+  .nav__toggle { display: flex; }
+
+  .hero img { height: 300px; }
+  .hero__content h1 { font-size: 2rem; }
+
+  .you { grid-template-columns: 1fr; }
+
+  .footer__inner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header { padding: 1rem; }
+  .hero__content { left: 1rem; right: 1rem; bottom: 1.5rem; }
+  .hero__content h1 { font-size: 1.6rem; }
+  .listings-section { padding: 2rem 1rem; }
+  .tget { padding: 2.5rem 1rem; }
+  .online { padding: 2.5rem 1rem; }
+}
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .blog-grid { grid-template-columns: 1fr 1fr; }
+            .featured-post { grid-template-columns: 1fr; }
+            .featured-post__img,
+            .featured-post__img-placeholder { min-height: 220px; }
+            .footer__inner { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+        @media (max-width: 600px) {
+            .blog-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav__wrap { display: none; }
+            .nav__form { display: none; }
+            .nav__toggle { display: flex; }
+        }
+        @media (max-width: 480px) {
+            .header { padding: 1rem; }
+            .blog-section { padding: 2rem 1rem 4rem; }
+        }
+    </style>
+    <style>
+        /* === Search dropdown === */
+        .nav__search-wrap { position: relative; }
+        .search-dropdown {
+            display: none; position: absolute;
+            top: calc(100% + 8px); left: 0;
+            min-width: 280px; background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+            z-index: 9999; overflow: hidden;
+        }
+        .search-dropdown.active { display: block; }
+        .search-result-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; cursor: pointer;
+            border-bottom: 1px solid #f0f0f0; transition: background 0.15s;
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background: #f7f3ea; }
+        .search-result-item img {
+            width: 52px; height: 38px; object-fit: cover;
+            border-radius: 6px; flex-shrink: 0;
+        }
+        .search-result-info { flex: 1; min-width: 0; }
+        .search-result-name {
+            font-size: 0.82rem; font-weight: 700; color: #0a1a3b;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .search-result-price { font-size: 0.75rem; color: #c9a84c; font-weight: 600; }
+        .search-result-empty { padding: 14px 16px; color: #999; font-size: 0.83rem; text-align: center; }
+        .search-result-footer {
+            padding: 10px 14px; background: #f7f3ea;
+            font-size: 0.78rem; text-align: center;
+            font-weight: 600; color: #0a1a3b; cursor: pointer;
+        }
+        .search-result-footer:hover { background: #ede8d8; }
+        /* === Phone CTA === */
+        .nav__cart.cart {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none; background: #c9a84c;
+            border-radius: 2rem; padding: 6px 14px 6px 10px;
+            transition: background 0.2s;
+        }
+        .nav__cart.cart:hover { background: #b8943d; }
+        .nav__cart.cart .cart__icon { color: #fff; font-size: 0.95rem; }
+        .cart__phone { color: #fff; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+        @media (max-width: 900px) {
+            .cart__phone { display: none; }
+            .nav__cart.cart { padding: 8px 10px; border-radius: 50%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <a href="./" class="header__details">
+            <h1 class="header__name">EL-AUTOS</h1>
+        </a>
+        <nav class="header__nav nav">
+            <ul class="nav__wrap">
+                <li><a href="./" class="nav__link">Home</a></li>
+                <li><a href="./inventory.html" class="nav__link">Inventory</a></li>
+                <li><a href="./blog.html" class="nav__link nav__link--active">Blog</a></li>
+                <li><a href="./compare.html" class="nav__link">Compare</a></li>
+                <li><a href="./about.html" class="nav__link">About Us</a></li>
+                <li><a href="./saved.html" class="nav__link">Saved</a></li>
+            </ul>
+            <div class="nav__extra">
+                <div class="nav__search-wrap" id="searchWrap">
+                    <form action="" class="nav__form" id="searchForm" autocomplete="off">
+                        <button type="submit" class="nav__btn" aria-label="Search cars"><i class="fa fa-search"></i></button>
+                        <label for="searchInput" class="sr-only">Search cars</label>
+                        <input type="search" placeholder="Search cars..." class="nav__input" id="searchInput" aria-label="Search cars" autocomplete="off">
+                    </form>
+                    <div class="search-dropdown" id="searchDropdown"></div>
+                </div>
+                <a href="tel:+2347048896840" class="nav__cart cart" title="Call EL-AUTOS" aria-label="Call EL-AUTOS">
+                    <span class="cart__icon"><i class="fa fa-phone"></i></span>
+                    <span class="cart__phone">+234 704 889 6840</span>
+                </a>
+                <div class="nav__toggle" id="navToggle">
+                    <i class="fa fa-bars" id="iconOpen"></i>
+                    <i class="fa fa-close" id="iconClose" style="display:none;"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            <li><a href="./">Home</a></li>
+            <li><a href="./inventory.html">Inventory</a></li>
+            <li><a href="./blog.html">Blog</a></li>
+            <li><a href="./compare.html">Compare</a></li>
+            <li><a href="./about.html">About Us</a></li>
+            <li><a href="./saved.html">Saved</a></li>
+        </ul>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+            <h2>BLOG</h2>
+            <p>Car news, buying tips, and Abuja market insights</p>
+        </div>
+    </section>
+
+    <!-- BLOG CONTENT -->
+    <section class="blog-section">
+
+        <!-- Category Filters -->
+        <div class="blog-filter">
+            <button class="blog-filter__btn active" onclick="filterPosts('all', this)">All Posts</button>
+            <button class="blog-filter__btn" onclick="filterPosts('buying-tips', this)">Buying Tips</button>
+            <button class="blog-filter__btn" onclick="filterPosts('car-news', this)">Car News</button>
+            <button class="blog-filter__btn" onclick="filterPosts('market', this)">Abuja Market</button>
+            <button class="blog-filter__btn" onclick="filterPosts('maintenance', this)">Maintenance</button>
+        </div>
+
+        <!-- Featured Post -->
+        <div class="featured-post" data-category="buying-tips">
+            <div class="featured-post__img-placeholder">
+                <i class="fa fa-car"></i>
+            </div>
+            <div class="featured-post__content">
+                <div class="post-meta">
+                    <span class="post-tag">Buying Tips</span>
+                    <span class="post-date"><i class="fa fa-calendar"></i> March 2026</span>
+                </div>
+                <h2 class="featured-post__title">10 Things to Check Before Buying a Used Car in Abuja</h2>
+                <p class="featured-post__excerpt">Whether you're buying your first car or upgrading to a bigger SUV, these 10 checks will protect you from costly surprises. From VIN verification to test drives, we cover everything you need to know.</p>
+                <a href="#" class="read-more">Read Full Article <i class="fa fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <!-- Blog Grid -->
+        <div class="blog-grid" id="blogGrid">
+
+            <div class="blog-card" data-category="market">
+                <div class="blog-card__img-placeholder"><i class="fa fa-line-chart"></i></div>
+                <div class="blog-card__body">
+                    <div class="post-meta">
+                        <span class="post-tag">Abuja Market</span>
+                        <span class="post-date">Feb 2026</span>
+                    </div>
+                    <h3 class="blog-card__title">Abuja Car Prices in 2026: What's Changed?</h3>
+                    <p class="blog-card__excerpt">We break down the current pricing trends for SUVs, sedans, and luxury vehicles across Abuja and the FCT.</p>
+                    <div class="blog-card__footer">
+                        <span class="blog-card__author">By <strong>EL-AUTOS Team</strong></span>
+                        <a href="#" class="read-more">Read <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card" data-category="car-news">
+                <div class="blog-card__img-placeholder"><i class="fa fa-star"></i></div>
+                <div class="blog-card__body">
+                    <div class="post-meta">
+                        <span class="post-tag">Car News</span>
+                        <span class="post-date">Jan 2026</span>
+                    </div>
+                    <h3 class="blog-card__title">Top 5 Most Popular Cars Sold in Nigeria Last Year</h3>
+                    <p class="blog-card__excerpt">Toyota still dominates, but Mercedes-Benz and Lexus are catching up fast. Here's the full breakdown.</p>
+                    <div class="blog-card__footer">
+                        <span class="blog-card__author">By <strong>EL-AUTOS Team</strong></span>
+                        <a href="#" class="read-more">Read <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card" data-category="maintenance">
+                <div class="blog-card__img-placeholder"><i class="fa fa-wrench"></i></div>
+                <div class="blog-card__body">
+                    <div class="post-meta">
+                        <span class="post-tag">Maintenance</span>
+                        <span class="post-date">Jan 2026</span>
+                    </div>
+                    <h3 class="blog-card__title">How to Maintain Your Toyota Land Cruiser in Nigeria</h3>
+                    <p class="blog-card__excerpt">The Land Cruiser is built tough, but it still needs proper care in Nigerian conditions. Our mechanic shares his top tips.</p>
+                    <div class="blog-card__footer">
+                        <span class="blog-card__author">By <strong>EL-AUTOS Team</strong></span>
+                        <a href="#" class="read-more">Read <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card" data-category="buying-tips">
+                <div class="blog-card__img-placeholder"><i class="fa fa-money-bill"></i></div>
+                <div class="blog-card__body">
+                    <div class="post-meta">
+                        <span class="post-tag">Buying Tips</span>
+                        <span class="post-date">Dec 2025</span>
+                    </div>
+                    <h3 class="blog-card__title">Should You Buy New or Used? A Practical Guide for Nigerian Buyers</h3>
+                    <p class="blog-card__excerpt">We compare the real costs, risks, and benefits of both options so you can make the smartest financial decision.</p>
+                    <div class="blog-card__footer">
+                        <span class="blog-card__author">By <strong>EL-AUTOS Team</strong></span>
+                        <a href="#" class="read-more">Read <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card" data-category="car-news">
+                <div class="blog-card__img-placeholder"><i class="fa fa-trophy"></i></div>
+                <div class="blog-card__body">
+                    <div class="post-meta">
+                        <span class="post-tag">Car News</span>
+                        <span class="post-date">Nov 2025</span>
+                    </div>
+                    <h3 class="blog-card__title">Mercedes-Benz AMG vs BMW M Series: Which is Right for You?</h3>
+                    <p class="blog-card__excerpt">Both badges carry prestige, but they deliver very different driving experiences. Here's our honest comparison.</p>
+                    <div class="blog-card__footer">
+                        <span class="blog-card__author">By <strong>EL-AUTOS Team</strong></span>
+                        <a href="#" class="read-more">Read <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card" data-category="market">
+                <div class="blog-card__img-placeholder"><i class="fa fa-map-marker"></i></div>
+                <div class="blog-card__body">
+                    <div class="post-meta">
+                        <span class="post-tag">Abuja Market</span>
+                        <span class="post-date">Oct 2025</span>
+                    </div>
+                    <h3 class="blog-card__title">The Best Areas to Buy a Car in Abuja FCT</h3>
+                    <p class="blog-card__excerpt">From Apo to Garki — we map out where buyers are finding the best deals and most trustworthy sellers in the capital.</p>
+                    <div class="blog-card__footer">
+                        <span class="blog-card__author">By <strong>EL-AUTOS Team</strong></span>
+                        <a href="#" class="read-more">Read <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter">
+        <div class="newsletter__inner">
+            <h3>STAY IN THE LOOP</h3>
+            <p>Get the latest car deals, market updates, and buying tips delivered straight to your inbox.</p>
+            <div class="newsletter__form">
+                <label for="newsletterEmail" class="sr-only">Email address</label>
+                <input type="email" class="newsletter__input" id="newsletterEmail" placeholder="Your email address" autocomplete="email">
+                <button class="newsletter__btn">Subscribe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+     <footer class="footer">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <h2>EL-AUTOS</h2>
+                <p>Premium car sales in Abuja, FCT.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="./">Home</a></li>
+                    <li><a href="./inventory.html">Inventory</a></li>
+                    <li><a href="./blog.html">Blog</a></li>
+                    <li><a href="./compare.html">Compare</a></li>
+                    <li><a href="./about.html">About Us</a></li>
+                    <li><a href="./saved.html">Saved</a></li>
+                </ul>
+            </div>
+                        <div class="footer__contact">
+                <h4>Contact</h4>
+                <p><i class="fa fa-phone"></i> <a href="tel:+2347048896840" style="color:inherit;text-decoration:none;">+234 704 889 6840</a></p>
+                <p><i class="fa fa-envelope"></i> <a href="mailto:emmanueloluwaseun039@gmail.com" style="color:inherit;text-decoration:none;">emmanueloluwaseun039@gmail.com</a></p>
+                <p><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps/search/Abuja+FCT+Nigeria" target="_blank" style="color:inherit;text-decoration:none;">Abuja, FCT, Nigeria</a></p>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>&copy; 2026 EL-AUTOS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        /* Mobile nav */
+        const toggle = document.getElementById('navToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const iconOpen = document.getElementById('iconOpen');
+        const iconClose = document.getElementById('iconClose');
+        toggle.addEventListener('click', () => {
+            const open = mobileMenu.classList.toggle('mobile-menu--open');
+            iconOpen.style.display = open ? 'none' : 'block';
+            iconClose.style.display = open ? 'block' : 'none';
+        });
+
+        /* Category filter */
+        function filterPosts(category, btn) {
+            // Update active button
+            document.querySelectorAll('.blog-filter__btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Show/hide cards
+            document.querySelectorAll('#blogGrid .blog-card').forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                card.style.display = (category === 'all' || cardCat === category) ? 'block' : 'none';
+            });
+        }
+    </script>
+<script>
+        /* === LIVE HEADER SEARCH === */
+        (function() {
+            var searchInput    = document.getElementById('searchInput');
+            var searchForm     = document.getElementById('searchForm');
+            var searchDropdown = document.getElementById('searchDropdown');
+            if (!searchInput || !searchDropdown) return;
+
+            var FALLBACK = [
+                {id:1,name:"Toyota Land Cruiser",make:"Toyota",model:"Land Cruiser",year:2009,condition:"Used",body:"SUV",price:61500000,priceLabel:"₦61,500,000",transmission:"Automatic",images:["./images/RDT_20260127_1809521317004081621988621.jpg"]},
+                {id:2,name:"Mercedes-Benz C43 AMG",make:"Mercedes-Benz",model:"C43 AMG",year:2020,condition:"Used",body:"Sedan",price:67000000,priceLabel:"₦67,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1809447195146435998933724.jpg"]},
+                {id:3,name:"Lexus IS250",make:"Lexus",model:"IS250",year:2015,condition:"Used",body:"Sedan",price:37000000,priceLabel:"₦37,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1811496403388373556527195.jpg"]},
+                {id:4,name:"Toyota Prado",make:"Toyota",model:"Prado",year:2018,condition:"Used",body:"SUV",price:45000000,priceLabel:"₦45,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1808431385690902689275148.jpg"]},
+                {id:5,name:"BMW 5 Series",make:"BMW",model:"5 Series",year:2019,condition:"Used",body:"Sedan",price:52000000,priceLabel:"₦52,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1809361114178644653186405.jpg"]},
+                {id:6,name:"Lexus LX570",make:"Lexus",model:"LX570",year:2017,condition:"Used",body:"SUV",price:58000000,priceLabel:"₦58,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1806476362090634168885220.jpg"]}
+            ];
+
+            function loadCars() {
+                try {
+                    var d = JSON.parse(localStorage.getItem('elautos_cars'));
+                    if (Array.isArray(d) && d.length > 0) return d;
+                } catch(e) {}
+                return FALLBACK;
+            }
+
+            function normalise(s) { return (s || '').toLowerCase().trim(); }
+
+            function showDropdown(results, q) {
+                if (results.length === 0) {
+                    searchDropdown.innerHTML = '<div class="search-result-empty">No cars found for "<strong>' + q + '</strong>"</div>';
+                } else {
+                    var items = results.slice(0, 5).map(function(car) {
+                        var img = (car.images && car.images[0]) ? car.images[0] : 'https://placehold.co/60x40/0a1a3b/c9a84c?text=EL';
+                        return '<div class="search-result-item" onclick="window.location.href=\'./car-detail.html?id=' + car.id + '\'">' +
+                            '<img loading="lazy" decoding="async" src="' + img + '" alt="' + car.name + '" onerror="this.src=\'https://placehold.co/60x40/0a1a3b/c9a84c?text=EL\'">' +
+                            '<div class="search-result-info">' +
+                            '<div class="search-result-name">' + car.name + ' ' + (car.year || '') + '</div>' +
+                            '<div class="search-result-price">' + (car.priceLabel || '') + '</div>' +
+                            '</div></div>';
+                    }).join('');
+                    var label = results.length > 5 ? 'See all ' + results.length + ' results &rarr;' : 'View in Inventory &rarr;';
+                    items += '<div class="search-result-footer" onclick="window.location.href=\'./inventory.html?q=' + encodeURIComponent(q) + '\'">' + label + '</div>';
+                    searchDropdown.innerHTML = items;
+                }
+                searchDropdown.classList.add('active');
+            }
+
+            searchInput.addEventListener('input', function() {
+                var q = normalise(searchInput.value);
+                if (q.length < 2) { searchDropdown.classList.remove('active'); return; }
+                var results = loadCars().filter(function(car) {
+                    return normalise(car.name).includes(q) ||
+                           normalise(String(car.year)).includes(q) ||
+                           normalise(car.condition).includes(q) ||
+                           normalise(car.make).includes(q) ||
+                           normalise(car.model).includes(q) ||
+                           normalise(car.body).includes(q) ||
+                           normalise(car.transmission).includes(q);
+                });
+                showDropdown(results, q);
+            });
+
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var q = searchInput.value.trim();
+                    if (q) window.location.href = './inventory.html?q=' + encodeURIComponent(q);
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                var wrap = document.getElementById('searchWrap');
+                if (wrap && !wrap.contains(e.target)) searchDropdown.classList.remove('active');
+            });
+        })();
+    </script>
+</body>
+</html>

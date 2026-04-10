@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Compare Cars — Side-by-side vehicle comparison tool from EL-AUTOS Abuja.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compare Vehicles | EL-AUTOS</title>
+  <link rel="preload" href="./css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="./css/all.min.css"></noscript>
+  <link rel="stylesheet" href="./compare.css">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></noscript>
+    <style>
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+        /* === Search dropdown === */
+        .nav__search-wrap { position: relative; }
+        .search-dropdown {
+            display: none; position: absolute;
+            top: calc(100% + 8px); left: 0;
+            min-width: 280px; background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+            z-index: 9999; overflow: hidden;
+        }
+        .search-dropdown.active { display: block; }
+        .search-result-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; cursor: pointer;
+            border-bottom: 1px solid #f0f0f0; transition: background 0.15s;
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background: #f7f3ea; }
+        .search-result-item img {
+            width: 52px; height: 38px; object-fit: cover;
+            border-radius: 6px; flex-shrink: 0;
+        }
+        .search-result-info { flex: 1; min-width: 0; }
+        .search-result-name {
+            font-size: 0.82rem; font-weight: 700; color: #0a1a3b;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .search-result-price { font-size: 0.75rem; color: #c9a84c; font-weight: 600; }
+        .search-result-empty { padding: 14px 16px; color: #999; font-size: 0.83rem; text-align: center; }
+        .search-result-footer {
+            padding: 10px 14px; background: #f7f3ea;
+            font-size: 0.78rem; text-align: center;
+            font-weight: 600; color: #0a1a3b; cursor: pointer;
+        }
+        .search-result-footer:hover { background: #ede8d8; }
+        /* === Phone CTA === */
+        .nav__cart.cart {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none; background: #c9a84c;
+            border-radius: 2rem; padding: 6px 14px 6px 10px;
+            transition: background 0.2s;
+        }
+        .nav__cart.cart:hover { background: #b8943d; }
+        .nav__cart.cart .cart__icon { color: #fff; font-size: 0.95rem; }
+        .cart__phone { color: #fff; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+        @media (max-width: 900px) {
+            .cart__phone { display: none; }
+            .nav__cart.cart { padding: 8px 10px; border-radius: 50%; }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <a href="./" class="header__details">
+      <h1 class="header__name">EL-AUTOS</h1>
+    </a>
+    <nav class="header__nav nav">
+      <ul class="nav__wrap">
+        <li><a href="./" class="nav__link">Home</a></li>
+        <li><a href="./inventory.html" class="nav__link">Inventory</a></li>
+        <li><a href="./blog.html" class="nav__link">Blog</a></li>
+        <li><a href="./compare.html" class="nav__link nav__link--active">Compare</a></li>
+        <li><a href="./about.html" class="nav__link">About Us</a></li>
+        <li><a href="./saved.html" class="nav__link">Saved</a></li>
+      </ul>
+      <div class="nav__extra">
+        <div class="nav__search-wrap" id="searchWrap">
+                    <form action="" class="nav__form" id="searchForm" autocomplete="off">
+                        <button type="submit" class="nav__btn" aria-label="Search cars"><i class="fa fa-search"></i></button>
+                        <label for="searchInput" class="sr-only">Search cars</label>
+                        <input type="search" placeholder="Search cars..." class="nav__input" id="searchInput" aria-label="Search cars" autocomplete="off">
+                    </form>
+                    <div class="search-dropdown" id="searchDropdown"></div>
+                </div>
+                <a href="tel:+2347048896840" class="nav__cart cart" title="Call EL-AUTOS" aria-label="Call EL-AUTOS">
+                    <span class="cart__icon"><i class="fa fa-phone"></i></span>
+                    <span class="cart__phone">+234 704 889 6840</span>
+                </a>
+        <div class="nav__toggle" id="navToggle">
+          <i class="fa fa-bars" id="iconOpen"></i>
+          <i class="fa fa-close" id="iconClose" style="display:none;"></i>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="./">Home</a></li>
+      <li><a href="./inventory.html">Inventory</a></li>
+      <li><a href="./blog.html">Blog</a></li>
+      <li><a href="./compare.html">Compare</a></li>
+      <li><a href="./about.html">About Us</a></li>
+      <li><a href="./saved.html">Saved</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <h2>COMPARE VEHICLES</h2>
+      <p>Side-by-side comparison of up to 3 vehicles</p>
+    </div>
+  </section>
+
+  <!-- COMPARE SECTION -->
+  <section class="compare-section">
+    <div class="compare-wrapper">
+
+      <!-- SLOT STRIP -->
+      <div class="slot-strip">
+        <p class="slot-strip__label"><i class="fa fa-info-circle"></i> Select up to 3 vehicles to compare</p>
+        <div class="slot-strip__slots" id="slotStrip">
+          <div class="slot slot--empty" data-slot="0">
+            <a href="./inventory.html" class="slot__link">
+              <div class="slot__inner"><i class="fa fa-plus-circle"></i><span>Add Vehicle</span></div>
+            </a>
+          </div>
+          <div class="slot slot--empty" data-slot="1">
+            <a href="./inventory.html" class="slot__link">
+              <div class="slot__inner"><i class="fa fa-plus-circle"></i><span>Add Vehicle</span></div>
+            </a>
+          </div>
+          <div class="slot slot--empty" data-slot="2">
+            <a href="./inventory.html" class="slot__link">
+              <div class="slot__inner"><i class="fa fa-plus-circle"></i><span>Add Vehicle</span></div>
+            </a>
+          </div>
+        </div>
+        <!-- Add more vehicles CTA when some are already selected -->
+        <div class="slot-strip__cta" id="slotCta" style="display:none;">
+          <a href="./inventory.html" class="slot-cta-btn">
+            <i class="fa fa-plus"></i> Add more vehicles from Inventory
+          </a>
+        </div>
+      </div>
+
+      <!-- COMPARISON OUTPUT -->
+      <div class="compare-output" id="compareOutput">
+
+        <!-- EMPTY STATE -->
+        <div class="compare-empty" id="compareEmpty">
+          <div class="compare-empty__icon"><i class="fa fa-car"></i></div>
+          <h3>No vehicles selected yet</h3>
+          <p>Go to <a href="./inventory.html" class="compare-empty__link">Inventory</a> and click <strong>+ Compare</strong> on any vehicle to get started</p>
+          <a href="./inventory.html" class="compare-empty__btn">
+            <i class="fa fa-arrow-right"></i> Browse Inventory
+          </a>
+        </div>
+
+        <!-- DESKTOP TABLE -->
+        <div class="compare-table-wrap" id="compareTableWrap" style="display:none;">
+          <div class="compare-table" id="compareTable">
+            <div class="ct-row ct-header" id="ctHeader">
+              <div class="ct-label-col"><div class="ct-label-inner">Specification</div></div>
+            </div>
+            <div class="ct-row ct-spec" data-spec="body"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-car"></i> Body</span></div></div>
+            <div class="ct-row ct-spec" data-spec="year"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-calendar"></i> Year</span></div></div>
+            <div class="ct-row ct-spec" data-spec="mileage"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-tachometer"></i> Mileage</span></div></div>
+            <div class="ct-row ct-spec" data-spec="fuelType"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-gas-pump"></i> Fuel Type</span></div></div>
+            <div class="ct-row ct-spec" data-spec="engine"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-cog"></i> Engine</span></div></div>
+            <div class="ct-row ct-spec" data-spec="fuelConsumption"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-leaf"></i> Fuel Consumption</span></div></div>
+            <div class="ct-row ct-spec" data-spec="transmission"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-sliders"></i> Transmission</span></div></div>
+            <div class="ct-row ct-spec" data-spec="drive"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-road"></i> Drive</span></div></div>
+            <div class="ct-row ct-spec" data-spec="exteriorColor"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-paint-brush"></i> Exterior Color</span></div></div>
+            <div class="ct-row ct-spec ct-price-row" data-spec="price"><div class="ct-label-col"><span class="spec-label"><i class="fa fa-tag"></i> Price</span></div></div>
+          </div>
+        </div>
+
+        <!-- MOBILE CARD VIEW -->
+        <div class="mobile-compare" id="mobileCompare" style="display:none;">
+          <div class="mc-tabs" id="mcTabs"></div>
+          <div class="mc-panels" id="mcPanels"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+   <footer class="footer">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <h2>EL-AUTOS</h2>
+                <p>Premium car sales in Abuja, FCT.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="./">Home</a></li>
+                    <li><a href="./inventory.html">Inventory</a></li>
+                    <li><a href="./blog.html">Blog</a></li>
+                    <li><a href="./compare.html">Compare</a></li>
+                    <li><a href="./about.html">About Us</a></li>
+                    <li><a href="./saved.html">Saved</a></li>
+                </ul>
+            </div>
+                        <div class="footer__contact">
+                <h4>Contact</h4>
+                <p><i class="fa fa-phone"></i> <a href="tel:+2347048896840" style="color:inherit;text-decoration:none;">+234 704 889 6840</a></p>
+                <p><i class="fa fa-envelope"></i> <a href="mailto:emmanueloluwaseun039@gmail.com" style="color:inherit;text-decoration:none;">emmanueloluwaseun039@gmail.com</a></p>
+                <p><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps/search/Abuja+FCT+Nigeria" target="_blank" style="color:inherit;text-decoration:none;">Abuja, FCT, Nigeria</a></p>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>&copy; 2026 EL-AUTOS. All rights reserved.</p>
+        </div>
+    </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    /* ============================================================
+       FULL INVENTORY DATA  (keep in sync with inventory page)
+    ============================================================ */
+    const inventory = [
+      {
+        id: 1, name: "Toyota Land Cruiser", year: 2009,
+        price: 61500000, priceLabel: "₦61,500,000",
+        image: "./images/RDT_20260127_1809521317004081621988621.jpg",
+        stock: "Stock# 118", body: "SUV", mileage: "98,000 km",
+        fuelType: "Gasoline", engine: "5.7L V8",
+        fuelConsumption: "13/18 mpg", transmission: "Automatic",
+        drive: "4WD", exteriorColor: "Pearl White"
+      },
+      {
+        id: 2, name: "Mercedes-Benz C43 AMG", year: 2020,
+        price: 67000000, priceLabel: "₦67,000,000",
+        image: "./images/RDT_20260127_1809447195146435998933724.jpg",
+        stock: "Stock# 117", body: "Sedan", mileage: "32,000 km",
+        fuelType: "Gasoline", engine: "3.0L V6 Twin-Turbo",
+        fuelConsumption: "20/27 mpg", transmission: "Automatic (9G-Tronic)",
+        drive: "AWD", exteriorColor: "Obsidian Black"
+      },
+      {
+        id: 3, name: "Lexus IS250", year: 2015,
+        price: 37000000, priceLabel: "₦37,000,000",
+        image: "./images/RDT_20260127_1811496403388373556527195.jpg",
+        stock: "Stock# 116", body: "Sedan", mileage: "55,000 km",
+        fuelType: "Gasoline", engine: "2.5L V6",
+        fuelConsumption: "21/30 mpg", transmission: "Automatic (6-Speed)",
+        drive: "RWD", exteriorColor: "Starfire Pearl"
+      }
+    ];
+
+    const SPECS = [
+      { key: "body",             label: "Body",             icon: "fa-car" },
+      { key: "year",             label: "Year",             icon: "fa-calendar" },
+      { key: "mileage",         label: "Mileage",          icon: "fa-tachometer" },
+      { key: "fuelType",        label: "Fuel Type",        icon: "fa-gas-pump" },
+      { key: "engine",          label: "Engine",           icon: "fa-cog" },
+      { key: "fuelConsumption", label: "Fuel Consumption", icon: "fa-leaf" },
+      { key: "transmission",    label: "Transmission",     icon: "fa-sliders" },
+      { key: "drive",           label: "Drive",            icon: "fa-road" },
+      { key: "exteriorColor",   label: "Exterior Color",   icon: "fa-paint-brush" },
+      { key: "price",           label: "Price",            icon: "fa-tag" },
+    ];
+
+    /* ── Load inventory from localStorage (written by inventory.html) ── */
+    (function syncInventory() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('elautos_cars'));
+        if (Array.isArray(stored) && stored.length > 0) {
+          // Normalise: inventory.html uses images[] array; compare.html uses image string
+          stored.forEach(c => { if (!c.image && c.images) c.image = c.images[0]; });
+          inventory.length = 0;
+          stored.forEach(c => inventory.push(c));
+        }
+      } catch(e) {}
+    })();
+
+    const LS_KEY = 'elautos_compare_slots';
+
+    /* ── Load from localStorage ── */
+    function loadSlots() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LS_KEY));
+        if (Array.isArray(saved) && saved.length === 3) return saved;
+      } catch(e) {}
+      return [null, null, null];
+    }
+
+    function saveSlots() {
+      localStorage.setItem(LS_KEY, JSON.stringify(slots));
+    }
+
+    let slots = loadSlots();
+    let activeTab = 0;
+
+    /* ── Helpers ── */
+    function isMobile() { return window.innerWidth <= 720; }
+
+    function colorMap(n) {
+      return {'Pearl White':'#f0f0eb','Obsidian Black':'#1a1a1a',
+               'Starfire Pearl':'#e8e0d5','Silver':'#c0c0c0',
+               'Red':'#c0392b','Blue':'#2980b9'}[n] || '#aaa';
+    }
+
+    function specDisplay(car, key) {
+      if (key === 'price') return `<strong class="spec-price">${car.priceLabel}</strong>`;
+      if (key === 'exteriorColor')
+        return `<span class="color-dot" style="background:${colorMap(car[key])}"></span>${car[key]}`;
+      return car[key];
+    }
+
+    function bestValueId(cars) {
+      if (cars.length < 2) return null;
+      return cars.reduce((a, b) => a.price < b.price ? a : b).id;
+    }
+
+    function getActiveCars() {
+      return slots
+        .filter(id => id !== null)
+        .map(id => inventory.find(c => c.id === id || c.id === Number(id)))
+        .filter(Boolean);
+    }
+
+    /* ── Slot strip ── */
+    function renderSlots() {
+      const activeCars = getActiveCars();
+      const cta = document.getElementById('slotCta');
+
+      document.querySelectorAll('.slot').forEach((el, i) => {
+        const id = slots[i];
+        if (id) {
+          const car = inventory.find(c => c.id === id);
+          el.className = 'slot slot--filled';
+          el.innerHTML = `
+            <img loading="lazy" decoding="async" src="${car.image}" alt="${car.name}"
+              onerror="this.src='https://placehold.co/120x70/0a1a3b/c9a84c?text=CAR'">
+            <div class="slot__name">${car.name}<br><small>${car.year}</small></div>
+            <button class="slot__remove" onclick="removeCar(${id})"><i class="fa fa-times"></i></button>`;
+        } else {
+          el.className = 'slot slot--empty';
+          el.innerHTML = `
+            <a href="./inventory.html" class="slot__link">
+              <div class="slot__inner">
+                <i class="fa fa-plus-circle"></i>
+                <span>Add Vehicle</span>
+              </div>
+            </a>`;
+        }
+      });
+
+      // Show "Add more" CTA only when some slots are filled but not all
+      const filled = activeCars.length;
+      cta.style.display = (filled > 0 && filled < 3) ? 'flex' : 'none';
+    }
+
+    /* ── Remove from compare ── */
+    function removeCar(id) {
+      const idx = slots.indexOf(id);
+      if (idx !== -1) slots[idx] = null;
+      saveSlots();
+      refresh();
+    }
+
+    /* ── Desktop table ── */
+    function renderDesktopTable(cars) {
+      const table = document.getElementById('compareTable');
+      table.style.gridTemplateColumns = `190px repeat(${cars.length}, 1fr)`;
+
+      const header = document.getElementById('ctHeader');
+      header.querySelectorAll('.ct-car-col').forEach(e => e.remove());
+      cars.forEach(car => {
+        const col = document.createElement('div');
+        col.className = 'ct-car-col ct-car-header';
+        col.innerHTML = `
+          <img loading="lazy" decoding="async" src="${car.image}" alt="${car.name}"
+            onerror="this.src='https://placehold.co/260x150/0a1a3b/c9a84c?text=EL-AUTOS'">
+          <h3>${car.name}</h3>
+          <span class="ct-year-badge">${car.year}</span>
+          <span class="ct-stock">${car.stock}</span>
+          <button class="ct-remove-btn" onclick="removeCar(${car.id})">
+            <i class="fa fa-times"></i> Remove
+          </button>`;
+        header.appendChild(col);
+      });
+
+      const bvId = bestValueId(cars);
+      document.querySelectorAll('.ct-spec').forEach(row => {
+        row.querySelectorAll('.ct-car-col').forEach(e => e.remove());
+        const key = row.dataset.spec;
+        cars.forEach(car => {
+          const col = document.createElement('div');
+          col.className = 'ct-car-col ct-car-spec';
+          const badge = (key === 'price' && car.id === bvId)
+            ? '<span class="best-badge">Best Value</span>' : '';
+          col.innerHTML = `<div class="ct-spec-val">${specDisplay(car, key)}${badge}</div>`;
+          row.appendChild(col);
+        });
+      });
+    }
+
+    /* ── Mobile cards ── */
+    function renderMobileCards(cars) {
+      if (activeTab >= cars.length) activeTab = 0;
+      const bvId = bestValueId(cars);
+
+      document.getElementById('mcTabs').innerHTML = cars.map((car, i) => `
+        <button class="mc-tab ${i === activeTab ? 'mc-tab--active' : ''}"
+          onclick="switchTab(${i})">
+          <span class="mc-tab__name">${car.name.split(' ').slice(0,2).join(' ')}</span>
+          <span class="mc-tab__year">${car.year}</span>
+        </button>`).join('');
+
+      document.getElementById('mcPanels').innerHTML = cars.map((car, i) => `
+        <div class="mc-panel ${i === activeTab ? 'mc-panel--active' : ''}">
+          <div class="mc-car-hero">
+            <img loading="lazy" decoding="async" src="${car.image}" alt="${car.name}"
+              onerror="this.src='https://placehold.co/400x220/0a1a3b/c9a84c?text=EL-AUTOS'">
+            <div class="mc-car-hero__overlay">
+              <h3>${car.name}</h3>
+              <div class="mc-hero-badges">
+                <span class="ct-year-badge">${car.year}</span>
+                ${car.id === bvId ? '<span class="best-badge">Best Value</span>' : ''}
+              </div>
+            </div>
+            <button class="mc-remove" onclick="removeCar(${car.id})">
+              <i class="fa fa-times"></i> Remove
+            </button>
+          </div>
+          <ul class="mc-spec-list">
+            ${SPECS.map(s => `
+              <li class="mc-spec-row ${s.key === 'price' ? 'mc-spec-row--price' : ''}">
+                <span class="mc-spec-label"><i class="fa ${s.icon}"></i> ${s.label}</span>
+                <span class="mc-spec-val">${specDisplay(car, s.key)}</span>
+              </li>`).join('')}
+          </ul>
+          ${cars.length > 1 ? `
+          <div class="mc-nav">
+            ${i > 0
+              ? `<button class="mc-nav__btn" onclick="switchTab(${i-1})"><i class="fa fa-chevron-left"></i> Prev</button>`
+              : '<span></span>'}
+            <span class="mc-nav__count">${i+1} of ${cars.length}</span>
+            ${i < cars.length-1
+              ? `<button class="mc-nav__btn" onclick="switchTab(${i+1})">Next <i class="fa fa-chevron-right"></i></button>`
+              : '<span></span>'}
+          </div>` : ''}
+        </div>`).join('');
+    }
+
+    function switchTab(idx) {
+      activeTab = idx;
+      renderMobileCards(getActiveCars());
+    }
+
+    /* ── Main render ── */
+    function renderTable() {
+      const cars = getActiveCars();
+      const empty       = document.getElementById('compareEmpty');
+      const desktopWrap = document.getElementById('compareTableWrap');
+      const mobileWrap  = document.getElementById('mobileCompare');
+
+      if (cars.length === 0) {
+        empty.style.display       = 'flex';
+        desktopWrap.style.display = 'none';
+        mobileWrap.style.display  = 'none';
+        return;
+      }
+
+      empty.style.display = 'none';
+
+      if (isMobile()) {
+        desktopWrap.style.display = 'none';
+        mobileWrap.style.display  = 'block';
+        renderMobileCards(cars);
+      } else {
+        mobileWrap.style.display  = 'none';
+        desktopWrap.style.display = 'block';
+        renderDesktopTable(cars);
+      }
+    }
+
+    function refresh() {
+      renderSlots();
+      renderTable();
+    }
+
+    /* ── Resize handler ── */
+    let _lastMobile = isMobile();
+    window.addEventListener('resize', () => {
+      const m = isMobile();
+      if (m !== _lastMobile) { _lastMobile = m; renderTable(); }
+    });
+
+    /* ── Mobile nav ── */
+    const toggle    = document.getElementById('navToggle');
+    const menu      = document.getElementById('mobileMenu');
+    const iconOpen  = document.getElementById('iconOpen');
+    const iconClose = document.getElementById('iconClose');
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('mobile-menu--open');
+      iconOpen.style.display  = open ? 'none'  : 'inline';
+      iconClose.style.display = open ? 'inline': 'none';
+    });
+
+    /* ── Init ── */
+    refresh();
+
+  </script>
+<script>
+        /* === LIVE HEADER SEARCH === */
+        (function() {
+            var searchInput    = document.getElementById('searchInput');
+            var searchForm     = document.getElementById('searchForm');
+            var searchDropdown = document.getElementById('searchDropdown');
+            if (!searchInput || !searchDropdown) return;
+
+            var FALLBACK = [
+                {id:1,name:"Toyota Land Cruiser",make:"Toyota",model:"Land Cruiser",year:2009,condition:"Used",body:"SUV",price:61500000,priceLabel:"₦61,500,000",transmission:"Automatic",images:["./images/RDT_20260127_1809521317004081621988621.jpg"]},
+                {id:2,name:"Mercedes-Benz C43 AMG",make:"Mercedes-Benz",model:"C43 AMG",year:2020,condition:"Used",body:"Sedan",price:67000000,priceLabel:"₦67,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1809447195146435998933724.jpg"]},
+                {id:3,name:"Lexus IS250",make:"Lexus",model:"IS250",year:2015,condition:"Used",body:"Sedan",price:37000000,priceLabel:"₦37,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1811496403388373556527195.jpg"]},
+                {id:4,name:"Toyota Prado",make:"Toyota",model:"Prado",year:2018,condition:"Used",body:"SUV",price:45000000,priceLabel:"₦45,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1808431385690902689275148.jpg"]},
+                {id:5,name:"BMW 5 Series",make:"BMW",model:"5 Series",year:2019,condition:"Used",body:"Sedan",price:52000000,priceLabel:"₦52,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1809361114178644653186405.jpg"]},
+                {id:6,name:"Lexus LX570",make:"Lexus",model:"LX570",year:2017,condition:"Used",body:"SUV",price:58000000,priceLabel:"₦58,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1806476362090634168885220.jpg"]}
+            ];
+
+            function loadCars() {
+                try {
+                    var d = JSON.parse(localStorage.getItem('elautos_cars'));
+                    if (Array.isArray(d) && d.length > 0) return d;
+                } catch(e) {}
+                return FALLBACK;
+            }
+
+            function normalise(s) { return (s || '').toLowerCase().trim(); }
+
+            function showDropdown(results, q) {
+                if (results.length === 0) {
+                    searchDropdown.innerHTML = '<div class="search-result-empty">No cars found for "<strong>' + q + '</strong>"</div>';
+                } else {
+                    var items = results.slice(0, 5).map(function(car) {
+                        var img = (car.images && car.images[0]) ? car.images[0] : 'https://placehold.co/60x40/0a1a3b/c9a84c?text=EL';
+                        return '<div class="search-result-item" onclick="window.location.href=\'./car-detail.html?id=' + car.id + '\'">' +
+                            '<img loading="lazy" decoding="async" src="' + img + '" alt="' + car.name + '" onerror="this.src=\'https://placehold.co/60x40/0a1a3b/c9a84c?text=EL\'">' +
+                            '<div class="search-result-info">' +
+                            '<div class="search-result-name">' + car.name + ' ' + (car.year || '') + '</div>' +
+                            '<div class="search-result-price">' + (car.priceLabel || '') + '</div>' +
+                            '</div></div>';
+                    }).join('');
+                    var label = results.length > 5 ? 'See all ' + results.length + ' results &rarr;' : 'View in Inventory &rarr;';
+                    items += '<div class="search-result-footer" onclick="window.location.href=\'./inventory.html?q=' + encodeURIComponent(q) + '\'">' + label + '</div>';
+                    searchDropdown.innerHTML = items;
+                }
+                searchDropdown.classList.add('active');
+            }
+
+            searchInput.addEventListener('input', function() {
+                var q = normalise(searchInput.value);
+                if (q.length < 2) { searchDropdown.classList.remove('active'); return; }
+                var results = loadCars().filter(function(car) {
+                    return normalise(car.name).includes(q) ||
+                           normalise(String(car.year)).includes(q) ||
+                           normalise(car.condition).includes(q) ||
+                           normalise(car.make).includes(q) ||
+                           normalise(car.model).includes(q) ||
+                           normalise(car.body).includes(q) ||
+                           normalise(car.transmission).includes(q);
+                });
+                showDropdown(results, q);
+            });
+
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var q = searchInput.value.trim();
+                    if (q) window.location.href = './inventory.html?q=' + encodeURIComponent(q);
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                var wrap = document.getElementById('searchWrap');
+                if (wrap && !wrap.contains(e.target)) searchDropdown.classList.remove('active');
+            });
+        })();
+    </script>
+</body>
+</html>

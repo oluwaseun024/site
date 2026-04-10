@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#0a1a3b">
+    <meta name="description" content="Car Details — View full specs, photos and pricing on EL-AUTOS Abuja.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details | EL-AUTOS</title>
+    <link rel="stylesheet" href="./compare.css">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></noscript>
+    <style>
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+        *, *::after, *::before {
+            box-sizing: border-box; margin: 0; padding: 0; border: 0;
+            outline: 0; list-style: none; text-decoration: none; scroll-behavior: smooth;
+        }
+        :root {
+            --navy: #0a1a3b;
+            --dark: #1c1c2e;
+            --gold: #c9a84c;
+            --white: #ffffff;
+            --light-bg: #f5f6fa;
+            --text: #2d2d2d;
+            --muted: #777;
+            --card-border: #e0e4ef;
+            --transition: 0.3s ease;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body { background: var(--light-bg); color: var(--text); line-height: 1.6; }
+
+        /* ── HEADER ── */
+        .header { display: flex; justify-content: space-between; align-items: center; gap: 2rem; padding: 1.2rem 2rem; max-width: 1200px; margin: 0 auto; }
+        .header__name { color: var(--navy); font-size: 1.6rem; font-weight: 800; letter-spacing: 2px; }
+        .nav { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; }
+        .nav__wrap { display: flex; align-items: center; gap: 0.25rem; }
+        .nav__link { padding: 0.5rem 0.9rem; color: var(--dark); font-size: 0.95rem; font-weight: 600; border-radius: 6px; transition: var(--transition); }
+        .nav__link:hover { color: var(--navy); background: rgba(10,26,59,0.07); }
+        .nav__extra { display: flex; align-items: center; gap: 1rem; }
+        .nav__toggle { display: none; cursor: pointer; font-size: 1.3rem; color: var(--navy); padding: 0.4rem; }
+
+        .mobile-menu { display: none; flex-direction: column; background: var(--navy); padding: 1.5rem 2rem; }
+        .mobile-menu.mobile-menu--open { display: flex; }
+        .mobile-menu ul { display: flex; flex-direction: column; gap: 1rem; }
+        .mobile-menu a { color: var(--white); font-size: 1rem; font-weight: 600; }
+        .mobile-menu a:hover { color: var(--gold); }
+
+        /* ── BREADCRUMB ── */
+        .breadcrumb {
+            max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 0;
+            font-size: 0.82rem; color: var(--muted);
+            display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
+        }
+        .breadcrumb a { color: var(--muted); transition: var(--transition); }
+        .breadcrumb a:hover { color: var(--navy); }
+        .breadcrumb i { font-size: 0.65rem; }
+        .breadcrumb span { color: var(--navy); font-weight: 600; }
+
+        /* ── DETAIL SECTION ── */
+        .detail-section { max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* ── GALLERY ──
+           position: static so the image scrolls naturally with the page.
+           Previously it was position: sticky which caused it to stay fixed
+           at the top while only the right column text scrolled behind it.
+        ── */
+        .gallery {
+            position: static; /* FIX: was "sticky" — caused image to float over content */
+        }
+
+        .gallery__main {
+            width: 100%;
+            aspect-ratio: 16/10;
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--dark);
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+        .gallery__main img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .gallery__main .img-counter {
+            position: absolute;
+            bottom: 0.8rem; right: 0.8rem;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Prev / Next arrows */
+        .gallery__arrow {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            background: rgba(10,26,59,0.75);
+            color: var(--white);
+            border: none;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+            z-index: 2;
+        }
+        .gallery__arrow:hover { background: var(--gold); color: var(--navy); }
+        .gallery__arrow--prev { left: 0.75rem; }
+        .gallery__arrow--next { right: 0.75rem; }
+
+        .gallery__thumbs { display: flex; gap: 0.6rem; }
+        .gallery__thumb {
+            flex: 1;
+            aspect-ratio: 16/10;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .gallery__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .gallery__thumb.active { border-color: var(--gold); }
+        .gallery__thumb:hover { border-color: var(--navy); }
+
+        /* ── INFO PANEL (right column) ── */
+        .info-panel { display: flex; flex-direction: column; gap: 1.2rem; }
+
+        .info-card {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        /* Title card */
+        .title-card { padding: 1.4rem; }
+        .title-card__badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--light-bg); border: 1px solid var(--card-border);
+            border-radius: 20px; padding: 3px 10px;
+            font-size: 0.72rem; font-weight: 700;
+            color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 0.7rem;
+        }
+        .title-card h1 { font-size: 1.35rem; font-weight: 900; color: var(--dark); line-height: 1.2; margin-bottom: 0.4rem; }
+        .title-card__stock { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; }
+        .title-card__price {
+            font-size: 1.7rem; font-weight: 900; color: var(--navy);
+            display: flex; align-items: baseline; gap: 0.3rem;
+        }
+        .title-card__price span { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+
+        /* Quick specs row */
+        .quick-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            border-top: 1px solid var(--card-border);
+        }
+        .qs-item {
+            padding: 0.9rem 1rem;
+            border-right: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .qs-item:nth-child(even) { border-right: none; }
+        .qs-item:nth-last-child(-n+2) { border-bottom: none; }
+        .qs-item__label {
+            font-size: 0.68rem; font-weight: 700; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.2rem;
+            display: flex; align-items: center; gap: 0.35rem;
+        }
+        .qs-item__label i { color: var(--navy); font-size: 0.7rem; }
+        .qs-item__val { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+
+        /* CTA card */
+        .cta-card { padding: 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+        .cta-btn {
+            width: 100%; padding: 0.85rem;
+            border-radius: 10px; font-size: 0.9rem; font-weight: 800;
+            cursor: pointer; text-align: center; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        .cta-btn--primary { background: var(--navy); color: var(--white); border: 2px solid var(--navy); }
+        .cta-btn--primary:hover { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+        .cta-btn--outline { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
+        .cta-btn--outline:hover { background: var(--navy); color: var(--white); }
+        .cta-btn--compare { background: transparent; color: var(--navy); border: 2px solid var(--card-border); }
+        .cta-btn--compare:hover { border-color: var(--navy); }
+        .cta-btn--compare.is-added { background: var(--navy); color: var(--white); border-color: var(--navy); }
+        .cta-btn--compare.is-added:hover { background: #c0392b; border-color: #c0392b; }
+        .cta-btn--save { background: transparent; color: var(--navy); border: 2px solid var(--card-border); }
+        .cta-btn--save:hover { border-color: var(--gold); color: var(--gold); }
+        .cta-btn--save.is-saved { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+        .cta-btn--save.is-saved:hover { background: #b8962e; border-color: #b8962e; }
+
+        /* ── FULL SPECS SECTION ── */
+        .specs-section { margin-top: 2rem; }
+        .section-title {
+            font-size: 0.78rem; font-weight: 800; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .section-title::after {
+            content: ''; flex: 1; height: 1px; background: var(--card-border);
+        }
+
+        .specs-grid {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 14px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .spec-row {
+            display: flex; align-items: center;
+            padding: 0.85rem 1.2rem;
+            border-bottom: 1px solid var(--card-border);
+            border-right: 1px solid var(--card-border);
+            gap: 0.8rem;
+        }
+        .spec-row:nth-child(even) { border-right: none; }
+        .spec-row:nth-last-child(-n+2) { border-bottom: none; }
+        .spec-row__icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: rgba(10,26,59,0.06);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .spec-row__icon i { color: var(--navy); font-size: 0.85rem; }
+        .spec-row__label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .spec-row__val { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+
+        /* ── DESCRIPTION ── */
+        .description-box {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 14px;
+            padding: 1.4rem;
+            margin-top: 1.5rem;
+        }
+        .description-box p { font-size: 0.92rem; color: var(--text); line-height: 1.8; }
+
+        /* ── FEATURES ── */
+        .features-box {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 14px;
+            padding: 1.4rem;
+            margin-top: 1.5rem;
+        }
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+        .feature-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.85rem; font-weight: 600; color: var(--dark);
+            background: var(--light-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+        }
+        .feature-item i { color: var(--dark); font-size: 0.75rem; }
+
+        /* ── NOT FOUND ── */
+        .not-found {
+            text-align: center; padding: 6rem 2rem;
+            display: flex; flex-direction: column; align-items: center; gap: 1rem;
+        }
+        .not-found i { font-size: 3rem; color: var(--card-border); }
+        .not-found h2 { font-size: 1.3rem; font-weight: 800; color: var(--dark); }
+        .not-found a {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            margin-top: 0.5rem; padding: 0.65rem 1.5rem;
+            background: var(--navy); color: var(--white);
+            border-radius: 25px; font-size: 0.88rem; font-weight: 700;
+        }
+        .not-found a:hover { background: var(--gold); color: var(--navy); }
+
+        /* ── FOOTER ── */
+        .footer { background: var(--dark); color: rgba(255,255,255,0.75); padding: 3rem 2rem 1.5rem; margin-top: 3rem; }
+        .footer__inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .footer__brand h2 { color: var(--white); font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 0.5rem; }
+        .footer__links h4, .footer__contact h4 { color: var(--white); font-size: 0.95rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: 1px; }
+        .footer__links ul { display: flex; flex-direction: column; gap: 0.5rem; }
+        .footer__links a { color: rgba(255,255,255,0.65); font-size: 0.9rem; transition: var(--transition); }
+        .footer__links a:hover { color: var(--gold); }
+        .footer__contact p { font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .footer__contact i { color: var(--gold); }
+        .footer__bottom { max-width: 1100px; margin: 1.2rem auto 0; text-align: center; font-size: 0.82rem; color: rgba(255,255,255,0.4); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 960px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .info-panel { display: grid; grid-template-columns: 1fr 1fr; }
+            .cta-card { grid-column: 1 / -1; }
+            .footer__inner { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .nav__wrap { display: none; }
+            .nav__toggle { display: flex; }
+            .info-panel { grid-template-columns: 1fr; }
+            .specs-grid { grid-template-columns: 1fr; }
+            .spec-row { border-right: none; }
+            .spec-row:nth-last-child(-n+2) { border-bottom: 1px solid var(--card-border); }
+            .spec-row:last-child { border-bottom: none; }
+        }
+        @media (max-width: 480px) {
+            .header { padding: 1rem; }
+            .detail-section { padding: 1rem 1rem 3rem; }
+            .breadcrumb { padding: 0.8rem 1rem 0; }
+            .features-list { grid-template-columns: 1fr 1fr; }
+            .quick-specs { grid-template-columns: 1fr 1fr; }
+            .footer__inner { grid-template-columns: 1fr; }
+        }
+    </style>
+    <style>
+        /* === Search dropdown === */
+        .nav__search-wrap { position: relative; }
+        .search-dropdown {
+            display: none; position: absolute;
+            top: calc(100% + 8px); left: 0;
+            min-width: 280px; background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+            z-index: 9999; overflow: hidden;
+        }
+        .search-dropdown.active { display: block; }
+        .search-result-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; cursor: pointer;
+            border-bottom: 1px solid #f0f0f0; transition: background 0.15s;
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background: #f7f3ea; }
+        .search-result-item img {
+            width: 52px; height: 38px; object-fit: cover;
+            border-radius: 6px; flex-shrink: 0;
+        }
+        .search-result-info { flex: 1; min-width: 0; }
+        .search-result-name {
+            font-size: 0.82rem; font-weight: 700; color: #0a1a3b;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .search-result-price { font-size: 0.75rem; color: #c9a84c; font-weight: 600; }
+        .search-result-empty { padding: 14px 16px; color: #999; font-size: 0.83rem; text-align: center; }
+        .search-result-footer {
+            padding: 10px 14px; background: #f7f3ea;
+            font-size: 0.78rem; text-align: center;
+            font-weight: 600; color: #0a1a3b; cursor: pointer;
+        }
+        .search-result-footer:hover { background: #ede8d8; }
+        /* === Phone CTA === */
+        .nav__cart.cart {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none; background: #c9a84c;
+            border-radius: 2rem; padding: 6px 14px 6px 10px;
+            transition: background 0.2s;
+        }
+        .nav__cart.cart:hover { background: #b8943d; }
+        .nav__cart.cart .cart__icon { color: #fff; font-size: 0.95rem; }
+        .cart__phone { color: #fff; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+        @media (max-width: 900px) {
+            .cart__phone { display: none; }
+            .nav__cart.cart { padding: 8px 10px; border-radius: 50%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <a href="./" class="header__details">
+            <h1 class="header__name">EL-AUTOS</h1>
+        </a>
+        <nav class="nav">
+            <ul class="nav__wrap">
+                <li><a href="./" class="nav__link">Home</a></li>
+                <li><a href="./inventory.html" class="nav__link">Inventory</a></li>
+                <li><a href="./blog.html" class="nav__link">Blog</a></li>
+                <li><a href="./compare.html" class="nav__link">Compare</a></li>
+                <li><a href="./about.html" class="nav__link">About Us</a></li>
+                <li><a href="./saved.html" class="nav__link">Saved</a></li>
+            </ul>
+            <div class="nav__extra">
+                <div class="nav__search-wrap" id="searchWrap">
+                    <form action="" class="nav__form" id="searchForm" autocomplete="off">
+                        <button type="submit" class="nav__btn" aria-label="Search cars"><i class="fa fa-search"></i></button>
+                        <label for="searchInput" class="sr-only">Search cars</label>
+                        <input type="search" placeholder="Search cars..." class="nav__input" id="searchInput" aria-label="Search cars" autocomplete="off">
+                    </form>
+                    <div class="search-dropdown" id="searchDropdown"></div>
+                </div>
+                <a href="tel:+2347048896840" class="nav__cart cart" title="Call EL-AUTOS" aria-label="Call EL-AUTOS">
+                    <span class="cart__icon"><i class="fa fa-phone"></i></span>
+                    <span class="cart__phone">+234 704 889 6840</span>
+                </a>
+                <div class="nav__toggle" id="navToggle">
+                    <i class="fa fa-bars" id="iconOpen"></i>
+                    <i class="fa fa-close" id="iconClose" style="display:none;"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            <li><a href="./">Home</a></li>
+            <li><a href="./inventory.html">Inventory</a></li>
+            <li><a href="./blog.html">Blog</a></li>
+            <li><a href="./compare.html">Compare</a></li>
+            <li><a href="./about.html">About Us</a></li>
+            <li><a href="./saved.html">Saved</a></li>
+        </ul>
+    </div>
+
+    <!-- BREADCRUMB -->
+    <nav class="breadcrumb" id="breadcrumb">
+        <a href="./">Home</a>
+        <i class="fa fa-chevron-right"></i>
+        <a href="./inventory.html">Inventory</a>
+        <i class="fa fa-chevron-right"></i>
+        <span id="breadcrumbName">Loading...</span>
+    </nav>
+
+    <!-- DETAIL CONTENT — injected by JS -->
+    <section class="detail-section" id="detailSection">
+        <div class="not-found" id="notFound" style="display:none;">
+            <i class="fa fa-car"></i>
+            <h2>Vehicle not found</h2>
+            <p style="color:var(--muted);font-size:.9rem;">This listing may have been removed.</p>
+            <a href="./inventory.html"><i class="fa fa-arrow-left"></i> Back to Inventory</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+     <footer class="footer">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <h2>EL-AUTOS</h2>
+                <p>Premium car sales in Abuja, FCT.</p>
+            </div>
+            <div class="footer__links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="./">Home</a></li>
+                    <li><a href="./inventory.html">Inventory</a></li>
+                    <li><a href="./blog.html">Blog</a></li>
+                    <li><a href="./compare.html">Compare</a></li>
+                    <li><a href="./about.html">About Us</a></li>
+                    <li><a href="./saved.html">Saved</a></li>
+                </ul>
+            </div>
+                        <div class="footer__contact">
+                <h4>Contact</h4>
+                <p><i class="fa fa-phone"></i> <a href="tel:+2347048896840" style="color:inherit;text-decoration:none;">+234 704 889 6840</a></p>
+                <p><i class="fa fa-envelope"></i> <a href="mailto:emmanueloluwaseun039@gmail.com" style="color:inherit;text-decoration:none;">emmanueloluwaseun039@gmail.com</a></p>
+                <p><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps/search/Abuja+FCT+Nigeria" target="_blank" style="color:inherit;text-decoration:none;">Abuja, FCT, Nigeria</a></p>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>&copy; 2026 EL-AUTOS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    /* ── Get car ID from URL ── */
+    const params = new URLSearchParams(window.location.search);
+    const carId  = parseInt(params.get('id'));
+
+    /* ── Load car data from localStorage (written by inventory.html) ── */
+    let CARS = [];
+    try { CARS = JSON.parse(localStorage.getItem('elautos_cars')) || []; } catch(e) {}
+
+    const car = CARS.find(c => c.id === carId);
+
+    /* ── Compare slots ── */
+    const LS_KEY = 'elautos_compare_slots';
+
+    function loadSlots() {
+        try {
+            const s = JSON.parse(localStorage.getItem(LS_KEY));
+            if (Array.isArray(s) && s.length === 3) return s;
+        } catch(e) {}
+        return [null, null, null];
+    }
+    let compareSlots = loadSlots();
+
+    function isAdded() { return compareSlots.includes(carId); }
+
+    function toggleCompare() {
+        compareSlots = loadSlots();
+        if (compareSlots.includes(carId)) {
+            compareSlots[compareSlots.indexOf(carId)] = null;
+        } else {
+            const idx = compareSlots.indexOf(null);
+            if (idx === -1) { alert('Remove a vehicle from compare first — max 3.'); return; }
+            compareSlots[idx] = carId;
+        }
+        localStorage.setItem(LS_KEY, JSON.stringify(compareSlots));
+        const btn = document.getElementById('compareBtn');
+        if (btn) {
+            const added = compareSlots.includes(carId);
+            btn.className = 'cta-btn cta-btn--compare' + (added ? ' is-added' : '');
+            btn.innerHTML = added
+                ? '<i class="fa fa-check"></i> Added to Compare'
+                : '<i class="fa fa-plus"></i> Add to Compare';
+        }
+    }
+
+    /* ── Saved cars ── */
+    const LS_SAVED = 'elautos_saved_cars';
+
+    function loadSaved() {
+        try {
+            const s = JSON.parse(localStorage.getItem(LS_SAVED));
+            if (Array.isArray(s)) return s;
+        } catch(e) {}
+        return [];
+    }
+
+    function isSaved() { return loadSaved().some(x => x === carId || Number(x) === carId); }
+
+    function toggleSave() {
+        let ids = loadSaved();
+        const saved = isSaved();
+        if (saved) {
+            ids = ids.filter(x => x !== carId && Number(x) !== carId);
+        } else {
+            ids.push(carId);
+        }
+        localStorage.setItem(LS_SAVED, JSON.stringify(ids));
+        const btn = document.getElementById('saveBtn');
+        if (btn) {
+            const nowSaved = isSaved();
+            btn.className = 'cta-btn cta-btn--save' + (nowSaved ? ' is-saved' : '');
+            btn.innerHTML = nowSaved
+                ? '<i class="fa fa-heart"></i> Saved'
+                : '<i class="fa fa-heart"></i> Save Car';
+            if (nowSaved) {
+                const toast = document.createElement('div');
+                toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#0a1a3b;color:#fff;padding:0.7rem 1.4rem;border-radius:30px;font-size:0.88rem;font-weight:600;z-index:9999;white-space:nowrap;';
+                toast.innerHTML = 'Saved! <a href="./saved.html" style="color:#c9a84c;font-weight:700;margin-left:6px;">View Saved →</a>';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        }
+    }
+
+    /* ── Gallery ── */
+    let currentImg = 0;
+
+    function setImage(idx) {
+        if (!car) return;
+        currentImg = (idx + car.images.length) % car.images.length;
+        const mainImg = document.getElementById('mainImg');
+        mainImg.style.opacity = '0';
+        setTimeout(() => {
+            mainImg.src = car.images[currentImg];
+            mainImg.style.opacity = '1';
+            document.getElementById('imgCounter').textContent = `${currentImg + 1} / ${car.images.length}`;
+        }, 150);
+        document.querySelectorAll('.gallery__thumb').forEach((t, i) => {
+            t.classList.toggle('active', i === currentImg);
+        });
+    }
+
+    /* ── Render page ── */
+    if (!car) {
+        document.getElementById('notFound').style.display = 'flex';
+        document.title = 'Not Found | EL-AUTOS';
+    } else {
+        document.title = `${car.name} ${car.year} | EL-AUTOS`;
+        document.getElementById('breadcrumbName').textContent = `${car.name} ${car.year}`;
+
+        const added = isAdded();
+        const section = document.getElementById('detailSection');
+
+        section.innerHTML = `
+        <div class="detail-grid">
+
+            <!-- LEFT: GALLERY + SPECS -->
+            <div>
+                <!-- Gallery -->
+                <div class="gallery">
+                    <div class="gallery__main">
+                        <img loading="lazy" decoding="async" id="mainImg" src="${car.images[0]}" alt="${car.name}"
+                             onerror="this.src='https://placehold.co/800x500/0a1a3b/c9a84c?text=EL-AUTOS'">
+                        <button class="gallery__arrow gallery__arrow--prev" onclick="setImage(currentImg - 1)">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="gallery__arrow gallery__arrow--next" onclick="setImage(currentImg + 1)">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <span class="img-counter" id="imgCounter">1 / ${car.images.length}</span>
+                    </div>
+                    <div class="gallery__thumbs">
+                        ${car.images.map((img, i) => `
+                            <div class="gallery__thumb ${i === 0 ? 'active' : ''}" onclick="setImage(${i})">
+                                <img loading="lazy" decoding="async" src="${img}" alt="${car.name} photo ${i+1}"
+                                     onerror="this.src='https://placehold.co/200x130/0a1a3b/c9a84c?text=EL-AUTOS'">
+                            </div>`).join('')}
+                    </div>
+                </div>
+
+                <!-- Full Specs -->
+                <div class="specs-section">
+                    <div class="section-title">Full Specifications</div>
+                    <div class="specs-grid">
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-car"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Body Type</div><div class="spec-row__val">${car.body}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-calendar"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Year</div><div class="spec-row__val">${car.year}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-tachometer"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Mileage</div><div class="spec-row__val">${car.mileage}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-fire"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Fuel Type</div><div class="spec-row__val">${car.fuelType}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-cog"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Engine</div><div class="spec-row__val">${car.engine}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-leaf"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Fuel Consumption</div><div class="spec-row__val">${car.fuelConsumption}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-sliders"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Transmission</div><div class="spec-row__val">${car.transmission}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-road"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Drive</div><div class="spec-row__val">${car.drive}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-paint-brush"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Exterior Color</div><div class="spec-row__val">${car.exteriorColor}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-circle"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Interior Color</div><div class="spec-row__val">${car.interiorColor}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-tag"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Condition</div><div class="spec-row__val">${car.condition}</div></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-row__icon"><i class="fa fa-map-marker"></i></div>
+                            <div class="spec-row__info"><div class="spec-row__label">Location</div><div class="spec-row__val">${car.location}</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="description-box">
+                    <div class="section-title" style="margin-bottom:0.7rem;">About This Vehicle</div>
+                    <p>${car.description}</p>
+                </div>
+
+                <!-- Features -->
+                <div class="features-box">
+                    <div class="section-title" style="margin-bottom:0.7rem;">Key Features</div>
+                    <div class="features-list">
+                        ${car.features.map(f => `
+                            <div class="feature-item">
+                                <i class="fa fa-check-circle"></i> ${f}
+                            </div>`).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: INFO PANEL -->
+            <div class="info-panel">
+
+                <!-- Title + Price -->
+                <div class="info-card title-card">
+                    <div class="title-card__badge">
+                        <i class="fa fa-tag"></i> ${car.condition} &bull; ${car.stock}
+                    </div>
+                    <h1>${car.name}</h1>
+                    <div class="title-card__stock">${car.year} &bull; ${car.mileage} &bull; ${car.location}</div>
+                    <div class="title-card__price">
+                        ${car.priceLabel} <span>asking price</span>
+                    </div>
+
+                    <!-- Quick specs -->
+                    <div class="quick-specs">
+                        <div class="qs-item">
+                            <div class="qs-item__label"><i class="fa fa-cog"></i> Engine</div>
+                            <div class="qs-item__val">${car.engine}</div>
+                        </div>
+                        <div class="qs-item">
+                            <div class="qs-item__label"><i class="fa fa-sliders"></i> Gearbox</div>
+                            <div class="qs-item__val">${car.transmission.split(' ')[0]}</div>
+                        </div>
+                        <div class="qs-item">
+                            <div class="qs-item__label"><i class="fa fa-road"></i> Drive</div>
+                            <div class="qs-item__val">${car.drive}</div>
+                        </div>
+                        <div class="qs-item">
+                            <div class="qs-item__label"><i class="fa fa-fire"></i> Fuel</div>
+                            <div class="qs-item__val">${car.fuelType}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTAs -->
+                <div class="info-card cta-card">
+                    <a href="tel:+2348000000000" class="cta-btn cta-btn--primary">
+                        <i class="fa fa-phone"></i> Call Us About This Car
+                    </a>
+                    <a href="https://wa.me/2348000000000?text=Hi, I'm interested in the ${encodeURIComponent(car.name + ' ' + car.year)} (${car.stock})"
+                       target="_blank" class="cta-btn cta-btn--outline">
+                        <i class="fa fa-whatsapp"></i> WhatsApp Enquiry
+                    </a>
+                    <button id="saveBtn" class="cta-btn cta-btn--save ${isSaved() ? 'is-saved' : ''}"
+                            onclick="toggleSave()">
+                        ${isSaved() ? '<i class="fa fa-heart"></i> Saved' : '<i class="fa fa-heart"></i> Save Car'}
+                    </button>
+                    <button id="compareBtn" class="cta-btn cta-btn--compare ${added ? 'is-added' : ''}"
+                            onclick="toggleCompare()">
+                        ${added ? '<i class="fa fa-check"></i> Added to Compare' : '<i class="fa fa-plus"></i> Add to Compare'}
+                    </button>
+                    <a href="./inventory.html" class="cta-btn cta-btn--compare" style="justify-content:center;">
+                        <i class="fa fa-arrow-left"></i> Back to Inventory
+                    </a>
+                </div>
+
+            </div>
+        </div>`;
+    }
+
+    /* ── Mobile nav ── */
+    const toggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const iconOpen = document.getElementById('iconOpen');
+    const iconClose = document.getElementById('iconClose');
+    toggle.addEventListener('click', () => {
+        const open = mobileMenu.classList.toggle('mobile-menu--open');
+        iconOpen.style.display  = open ? 'none'  : 'inline';
+        iconClose.style.display = open ? 'inline': 'none';
+    });
+
+  </script>
+<script>
+        /* === LIVE HEADER SEARCH === */
+        (function() {
+            var searchInput    = document.getElementById('searchInput');
+            var searchForm     = document.getElementById('searchForm');
+            var searchDropdown = document.getElementById('searchDropdown');
+            if (!searchInput || !searchDropdown) return;
+
+            var FALLBACK = [
+                {id:1,name:"Toyota Land Cruiser",make:"Toyota",model:"Land Cruiser",year:2009,condition:"Used",body:"SUV",price:61500000,priceLabel:"₦61,500,000",transmission:"Automatic",images:["./images/RDT_20260127_1809521317004081621988621.jpg"]},
+                {id:2,name:"Mercedes-Benz C43 AMG",make:"Mercedes-Benz",model:"C43 AMG",year:2020,condition:"Used",body:"Sedan",price:67000000,priceLabel:"₦67,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1809447195146435998933724.jpg"]},
+                {id:3,name:"Lexus IS250",make:"Lexus",model:"IS250",year:2015,condition:"Used",body:"Sedan",price:37000000,priceLabel:"₦37,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1811496403388373556527195.jpg"]},
+                {id:4,name:"Toyota Prado",make:"Toyota",model:"Prado",year:2018,condition:"Used",body:"SUV",price:45000000,priceLabel:"₦45,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1808431385690902689275148.jpg"]},
+                {id:5,name:"BMW 5 Series",make:"BMW",model:"5 Series",year:2019,condition:"Used",body:"Sedan",price:52000000,priceLabel:"₦52,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1809361114178644653186405.jpg"]},
+                {id:6,name:"Lexus LX570",make:"Lexus",model:"LX570",year:2017,condition:"Used",body:"SUV",price:58000000,priceLabel:"₦58,000,000",transmission:"Automatic",images:["./images/RDT_20260127_1806476362090634168885220.jpg"]}
+            ];
+
+            function loadCars() {
+                try {
+                    var d = JSON.parse(localStorage.getItem('elautos_cars'));
+                    if (Array.isArray(d) && d.length > 0) return d;
+                } catch(e) {}
+                return FALLBACK;
+            }
+
+            function normalise(s) { return (s || '').toLowerCase().trim(); }
+
+            function showDropdown(results, q) {
+                if (results.length === 0) {
+                    searchDropdown.innerHTML = '<div class="search-result-empty">No cars found for "<strong>' + q + '</strong>"</div>';
+                } else {
+                    var items = results.slice(0, 5).map(function(car) {
+                        var img = (car.images && car.images[0]) ? car.images[0] : 'https://placehold.co/60x40/0a1a3b/c9a84c?text=EL';
+                        return '<div class="search-result-item" onclick="window.location.href=\'./car-detail.html?id=' + car.id + '\'">' +
+                            '<img loading="lazy" decoding="async" src="' + img + '" alt="' + car.name + '" onerror="this.src=\'https://placehold.co/60x40/0a1a3b/c9a84c?text=EL\'">' +
+                            '<div class="search-result-info">' +
+                            '<div class="search-result-name">' + car.name + ' ' + (car.year || '') + '</div>' +
+                            '<div class="search-result-price">' + (car.priceLabel || '') + '</div>' +
+                            '</div></div>';
+                    }).join('');
+                    var label = results.length > 5 ? 'See all ' + results.length + ' results &rarr;' : 'View in Inventory &rarr;';
+                    items += '<div class="search-result-footer" onclick="window.location.href=\'./inventory.html?q=' + encodeURIComponent(q) + '\'">' + label + '</div>';
+                    searchDropdown.innerHTML = items;
+                }
+                searchDropdown.classList.add('active');
+            }
+
+            searchInput.addEventListener('input', function() {
+                var q = normalise(searchInput.value);
+                if (q.length < 2) { searchDropdown.classList.remove('active'); return; }
+                var results = loadCars().filter(function(car) {
+                    return normalise(car.name).includes(q) ||
+                           normalise(String(car.year)).includes(q) ||
+                           normalise(car.condition).includes(q) ||
+                           normalise(car.make).includes(q) ||
+                           normalise(car.model).includes(q) ||
+                           normalise(car.body).includes(q) ||
+                           normalise(car.transmission).includes(q);
+                });
+                showDropdown(results, q);
+            });
+
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var q = searchInput.value.trim();
+                    if (q) window.location.href = './inventory.html?q=' + encodeURIComponent(q);
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                var wrap = document.getElementById('searchWrap');
+                if (wrap && !wrap.contains(e.target)) searchDropdown.classList.remove('active');
+            });
+        })();
+    </script>
+</body>
+</html>
